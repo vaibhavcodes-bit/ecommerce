@@ -26,11 +26,22 @@ mongoose
   .catch((error) => console.log(error));
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
+
+const allowedOrigin = process.env.FRONTEND_URL;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like Postman or server-to-server requests)
+      if (!origin) return callback(null, true);
+
+      if (origin === allowedOrigin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
