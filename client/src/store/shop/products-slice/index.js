@@ -7,6 +7,8 @@ const initialState = {
   productDetails: null,
 };
 
+export const API_URL = import.meta.env.VITE_API_URL;
+
 export const fetchAllFilteredProducts = createAsyncThunk(
   "/products/fetchAllProducts",
   async ({ filterParams, sortParams }) => {
@@ -18,7 +20,7 @@ export const fetchAllFilteredProducts = createAsyncThunk(
     });
 
     const result = await axios.get(
-      `http://localhost:8080/api/shop/products/get?${query}`
+      `${API_URL}/api/shop/products/get?${query}`
     );
 
     console.log(result);
@@ -31,7 +33,7 @@ export const fetchProductDetails = createAsyncThunk(
   "/products/fetchProductDetails",
   async (id) => {
     const result = await axios.get(
-      `http://localhost:8080/api/shop/products/get/${id}`
+      `${API_URL}/api/shop/products/get/${id}`
     );
 
     return result?.data;

@@ -18,13 +18,11 @@ function ProductImageUpload({
 }) {
   const inputRef = useRef(null);
 
-  console.log(isEditMode, "isEditMode");
+  // ✅ Get backend URL from .env
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   function handleImageFileChange(event) {
-    console.log(event.target.files, "event.target.files");
     const selectedFile = event.target.files?.[0];
-    console.log(selectedFile);
-
     if (selectedFile) setImageFile(selectedFile);
   }
 
@@ -46,17 +44,22 @@ function ProductImageUpload({
   }
 
   async function uploadImageToCloudinary() {
-    setImageLoadingState(true);
-    const data = new FormData();
-    data.append("my_file", imageFile);
-    const response = await axios.post(
-      "http://localhost:8080/api/admin/products/upload-image",
-      data
-    );
-    console.log(response, "response");
+    try {
+      setImageLoadingState(true);
+      const data = new FormData();
+      data.append("my_file", imageFile);
 
-    if (response?.data?.success) {
-      setUploadedImageUrl(response.data.result.url);
+      const response = await axios.post(
+        `${API_BASE_URL}/api/admin/products/upload-image`,
+        data
+      );
+
+      if (response?.data?.success) {
+        setUploadedImageUrl(response.data.result.url);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
       setImageLoadingState(false);
     }
   }
