@@ -28,7 +28,11 @@ mongoose
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const allowedOrigin = process.env.FRONTEND_URL;
+const allowedOrigins = [
+  'http://localhost:5173',                // Local development
+  process.env.FRONTEND_URL,               // Production frontend (Vercel or other)
+  'https://ecommerce-silk-mu.vercel.app' // Optional: explicitly added deployed frontend
+];
 
 app.use(
   cors({
@@ -36,21 +40,23 @@ app.use(
       // Allow requests with no origin (like Postman or server-to-server requests)
       if (!origin) return callback(null, true);
 
-      if (origin === allowedOrigin) {
+      // Check if origin is allowed
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        console.log('Blocked CORS request from:', origin);
+        callback(new Error('Not allowed by CORS'));
       }
     },
-    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true, // allow cookies/auth headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cache-Control",
-      "Expires",
-      "Pragma",
+      'Content-Type',
+      'Authorization',
+      'Cache-Control',
+      'Expires',
+      'Pragma',
     ],
-    credentials: true,
   })
 );
 
