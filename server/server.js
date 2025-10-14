@@ -33,34 +33,26 @@ const allowedOrigin = process.env.FRONTEND_URL;
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (Postman or server-side)
+      // Allow requests with no origin (like Postman or server-to-server requests)
       if (!origin) return callback(null, true);
 
-      // Allow localhost development
-      if (origin === 'http://localhost:5173') return callback(null, true);
-
-      // Allow frontend from environment variable
-      if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) return callback(null, true);
-
-      // Allow any Vercel deployed frontend
-      if (/\.vercel\.app$/.test(origin)) return callback(null, true);
-
-      // Block everything else
-      console.log('Blocked CORS request from:', origin);
-      return callback(new Error('Not allowed by CORS'));
+      if (origin === allowedOrigin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
     },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'Cache-Control',
-      'Expires',
-      'Pragma',
+      "Content-Type",
+      "Authorization",
+      "Cache-Control",
+      "Expires",
+      "Pragma",
     ],
+    credentials: true,
   })
 );
-
 
 app.use(cookieParser());
 app.use(express.json());
