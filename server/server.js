@@ -28,38 +28,48 @@ mongoose
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const allowedOrigin = process.env.FRONTEND_URL;
+const allowedOrigins = [
+  process.env.FRONTEND_URL, // make sure this starts with "https://"
+  'http://localhost:5173',  // dev
+  'https://ecommerce-silk-mu.vercel.app',
+  'https://ecommerce-5souia0w7-vaibhav-pandeys-projects-0e4245d2.vercel.app',
+  // add any other exact frontends you use
+].filter(Boolean);
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (Postman or server-side)
-      if (!origin) return callback(null, true);
+// Regex that matches any vercel subdomain like something.vercel.app or sub.something.vercel.app
+const vercelRegex = /^https?:\/\/[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.vercel\.app$/;
 
-      // Allow localhost development
-      if (origin === 'http://localhost:5173') return callback(null, true);
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  console.log('CORS check - incoming Origin:', origin);
 
-      // Allow frontend from environment variable
-      if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) return callback(null, true);
+  // allow requests with no origin (Postman, server-side requests)
+  if (!origin) return next();
 
-      // Allow any Vercel deployed frontend
-      if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+  // allow exact whitelisted origins
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Expires, Pragma, token, Filter-FCM, college_id');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    return next();
+  }
 
-      // Block everything else
-      console.log('Blocked CORS request from:', origin);
-      return callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'Cache-Control',
-      'Expires',
-      'Pragma',
-    ],
-  })
-);
+  // allow vercel subdomains (flexible)
+  if (vercelRegex.test(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Expires, Pragma, token, Filter-FCM, college_id');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    return next();
+  }
+
+  console.log('Blocked CORS request from:', origin);
+  return res.status(403).send('Not allowed by CORS');
+});
+
+// ensure preflight handled
+app.options('*', (req, res) => res.sendStatus(204));
 
 
 app.use(cookieParser());
