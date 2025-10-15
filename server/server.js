@@ -71,7 +71,6 @@ app.use((req, res, next) => {
 // ensure preflight handled
 app.options('*', (req, res) => res.sendStatus(204));
 
-
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth", authRouter);
