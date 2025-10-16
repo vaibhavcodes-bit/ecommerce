@@ -10,4 +10,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Add this section
+  server: {
+    historyApiFallback: true,  // ensures local dev routes work
+  },
+  build: {
+    outDir: "dist",
+  },
 });
