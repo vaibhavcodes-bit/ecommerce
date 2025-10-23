@@ -71,8 +71,12 @@ app.use((req, res, next) => {
 // ensure preflight handled
 app.options('*', (req, res) => res.sendStatus(204));
 
-app.use(cookieParser());
-app.use(express.json());
+
+app.use(cookieParser());                 // read cookies from browser
+app.use(express.json());                 // parse JSON requests
+app.use(express.urlencoded({ extended: true })); // parse URL-encoded requests
+
+
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter);
 app.use("/api/admin/orders", adminOrderRouter);
