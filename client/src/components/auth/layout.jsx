@@ -1,10 +1,17 @@
 import { Outlet } from "react-router-dom";
+import shopuraLogo from "../images/new_remove.png";
+
 
 function AuthLayout() {
   return (
     <div className="flex min-h-screen w-full">
       <div className="hidden lg:flex items-center justify-center bg-black w-1/2 px-12">
         <div className="max-w-md space-y-6 text-center text-primary-foreground">
+           <img
+                src={shopuraLogo}
+                alt="Shopura Logo"
+                className="h-18 w-18 object-contain transform -rotate-45 filter invert"
+  />
           <h1 className="text-4xl font-extrabold tracking-tight">
             Welcome to Shopura Shopping
           </h1>
