@@ -23,6 +23,8 @@ import UserCartWrapper from "./cart-wrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
 import { Label } from "../ui/label";
+import shopuraLogo from "../images/new_remove.png";
+
 
 function MenuItems() {
   const navigate = useNavigate();
@@ -138,9 +140,13 @@ function ShoppingHeader() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        <Link to="/shop/home" className="flex items-center gap-2">
-          <HousePlug className="h-6 w-6" />
-          <span className="font-bold">Shopura</span>
+        <Link to="/shop/home" className="flex items-center gap-0.5">
+         <img
+              src={shopuraLogo}
+              alt="Shopura Logo"
+              className="h-9 w-9 object-contain transform -rotate-45"
+          />
+          <span className="font-bold text-lg">Shopura</span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>
